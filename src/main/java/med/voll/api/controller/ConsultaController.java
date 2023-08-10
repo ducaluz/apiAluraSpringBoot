@@ -55,8 +55,24 @@ public class ConsultaController {
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoConsulta>> listar(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao) {
 
-        var agora = LocalDateTime.now(); 
+        var agora = LocalDateTime.now();
         var page = repository.findAllByMotivoCancelamentoIsNullAndDataGreaterThanEqual(agora, paginacao).map(DadosDetalhamentoConsulta::new);
         return ResponseEntity.ok(page);
     }
+
+    @GetMapping("/canceladas")
+    public ResponseEntity<Page<DadosDetalhamentoConsulta>> listarCanceladas(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao) {
+
+        var page = repository.findAllByMotivoCancelamentoIsNotNull(paginacao).map(DadosDetalhamentoConsulta::new);
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/realizadas")
+    public ResponseEntity<Page<DadosDetalhamentoConsulta>> listarRealizadas(@PageableDefault(size = 10, sort = {"id"}) Pageable paginacao) {
+
+        var agora = LocalDateTime.now();
+        var page = repository.findAllByMotivoCancelamentoIsNullAndDataLessThanEqual(agora, paginacao).map(DadosDetalhamentoConsulta::new);
+        return ResponseEntity.ok(page);
+    }
+
 }
